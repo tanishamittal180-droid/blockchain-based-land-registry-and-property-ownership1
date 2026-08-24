@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Land Registry</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fa;
+      color: #172033;
+    }
+
+    .header {
+      height: 75px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 35px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #273c75;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .logo p {
+      margin: 3px 0 0;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .online {
+      color: #23804b;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 75px);
+    }
+
+    .sidebar {
+      width: 230px;
+      background: white;
+      border-right: 1px solid #ddd;
+      padding: 20px 12px;
+    }
+
+    .nav {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 13px;
+      margin-bottom: 5px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #606b80;
+      font-weight: bold;
+    }
+
+    .nav:hover,
+    .nav.active {
+      background: #eef1fb;
+      color: #273c75;
+    }
+
+    .main {
+      flex: 1;
+      padding: 35px;
+      max-width: 1200px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .heading h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .heading p {
+      color: #777;
+    }
+
+    .button {
+      background: #273c75;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 12px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #1d2d5d;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid #e1e5ec;
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .stat span {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 30px;
+      color: #273c75;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e1e5ec;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 22px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8dde7;
+      border-radius: 7px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #273c75;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f7f8fa;
+      color: #697386;
+      text-align: left;
+      padding: 14px;
+      font-size: 12px;
+    }
+
+    td {
+      border-top: 1px solid #edf0f4;
+      padding: 15px 14px;
+      font-size: 13px;
+    }
+
+    .badge {
+      color: #21834b;
+      background: #edf8f1;
+      padding: 6px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 45px;
+      color: #777;
+    }
+
+    .message {
+      padding: 14px;
+      border-radius: 8px;
+      background: #edf8f1;
+      color: #21834b;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    @media (max-width: 750px) {
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .nav {
+        min-width: 130px;
+      }
+
+      .main {
+        padding: 20px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .heading {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+
+    <div class="logo">
+
+      <div class="logo-box">
+        LR
+      </div>
+
+      <div>
+        <h1>Land Registry</h1>
+        <p>Property Ownership Management</p>
+      </div>
+
+    </div>
+
+    <div class="online">
+      ● Frontend Online
+    </div>
+
+  </header>
+
+
+  <div class="layout">
+
+    <aside class="sidebar">
+
+      <button class="nav active" onclick="showPage('dashboard', this)">
+        Dashboard
+      </button>
+
+      <button class="nav" onclick="showPage('register', this)">
+        Register Property
+      </button>
+
+      <button class="nav" onclick="showPage('properties', this)">
+        Properties
+      </button>
+
+      <button class="nav" onclick="showPage('transfer', this)">
+        Transfer Ownership
+      </button>
+
+    </aside>
+
+
+    <main class="main">
+
+
+      <!-- DASHBOARD -->
+
+      <section id="dashboard" class="page active">
+
+        <div class="heading">
+
+          <div>
+            <h2>Dashboard</h2>
+            <p>Manage property ownership records.</p>
+          </div>
+
+          <button
+            class="button"
+            onclick="showPageByName('register')"
+          >
+            + Register Property
+          </button>
+
+        </div>
+
+
+        <div class="stats">
+
+          <div class="stat">
+            <span>Total Properties</span>
+            <strong id="totalProperties">0</strong>
+          </div>
+
+          <div class="stat">
+            <span>Registered</span>
+            <strong id="registeredProperties">0</strong>
+          </div>
+
+          <div class="stat">
+            <span>System Status</span>
+            <strong style="font-size:18px">
+              ONLINE
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>Welcome to Land Registry</h3>
+
+          <p>
+            Register properties, view ownership records,
+            and transfer property ownership.
+          </p>
+
+          <button
+            class="button"
+            onclick="showPageByName('register')"
+          >
+            Register Your First Property
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- REGISTER -->
+
+      <section id="register" class="page">
+
+        <div class="heading">
+
+          <div>
+            <h2>Register Property</h2>
+            <p>Add a new property record.</p>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div id="successMessage" class="message">
+            Property registered successfully.
+          </div>
+
+
+          <form onsubmit="registerProperty(event)">
+
+            <div class="form-grid">
+
+              <div class="field full">
+
+                <label>
+                  Property Location
+                </label>
+
+                <input
+                  id="location"
+                  type="text"
+                  placeholder="Hyderabad, Telangana"
+                  required
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  Property Area
+                </label>
+
+                <input
+                  id="area"
+                  type="text"
+                  placeholder="2400 sq.ft"
+                  required
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  Property Type
+                </label>
+
+                <select id="propertyType">
+
+                  <option>
+                    Residential
+                  </option>
+
+                  <option>
+                    Commercial
+                  </option>
+
+                  <option>
+                    Agricultural
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="field full">
+
+                <label>
+                  Owner Name
+                </label>
+
+                <input
+                  id="owner"
+                  type="text"
+                  placeholder="Enter owner name"
+                  required
+                >
+
+              </div>
+
+            </div>
+
+
+            <button
+              type="submit"
+              class="button"
+            >
+              Register Property
+            </button>
+
+          </form>
+
+        </div>
+
+      </section>
+
+
+      <!-- PROPERTIES -->
+
+      <section id="properties" class="page">
+
+        <div class="heading">
+
+          <div>
+            <h2>Properties</h2>
+            <p>All registered property records.</p>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div style="overflow-x:auto">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>ID</th>
+                  <th>Location</th>
+                  <th>Area</th>
+                  <th>Type</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="propertyTable">
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- TRANSFER -->
+
+      <section id="transfer" class="page">
+
+        <div class="heading">
+
+          <div>
+            <h2>Transfer Ownership</h2>
+            <p>Transfer a property to another owner.</p>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <form onsubmit="transferOwnership(event)">
+
+            <div>
+
+              <label>
+                Property
+              </label>
+
+              <select
+                id="transferProperty"
+                required
+              >
+
+                <option value="">
+                  Select property
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div>
+
+              <label>
+                New Owner
+              </label>
+
+              <input
+                id="newOwner"
+                type="text"
+                placeholder="Enter new owner"
+                required
+              >
+
+            </div>
+
+
+            <button
+              class="button"
+              type="submit"
+            >
+              Transfer Ownership
+            </button>
+
+          </form>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    let properties =
+      JSON.parse(
+        localStorage.getItem("landRegistryProperties")
+      ) || [];
+
+
+    function saveProperties() {
+
+      localStorage.setItem(
+        "landRegistryProperties",
+        JSON.stringify(properties)
+      );
+
+    }
+
+
+    function showPage(pageId, button) {
+
+      document
+        .querySelectorAll(".page")
+        .forEach(function(page) {
+          page.classList.remove("active");
+        });
+
+
+      document
+        .getElementById(pageId)
+        .classList.add("active");
+
+
+      document
+        .querySelectorAll(".nav")
+        .forEach(function(nav) {
+          nav.classList.remove("active");
+        });
+
+
+      if (button) {
+        button.classList.add("active");
+      }
+
+
+      renderProperties();
+
+    }
+
+
+    function showPageByName(pageId) {
+
+      document
+        .querySelectorAll(".page")
+        .forEach(function(page) {
+          page.classList.remove("active");
+        });
+
+
+      document
+        .getElementById(pageId)
+        .classList.add("active");
+
+
+      document
+        .querySelectorAll(".nav")
+        .forEach(function(nav) {
+          nav.classList.remove("active");
+        });
+
+
+      renderProperties();
+
+    }
+
+
+    function registerProperty(event) {
+
+      event.preventDefault();
+
+
+      const property = {
+
+        id:
+          "LR-" +
+          String(properties.length + 1)
+            .padStart(3, "0"),
+
+        location:
+          document.getElementById("location").value,
+
+        area:
+          document.getElementById("area").value,
+
+        propertyType:
+          document.getElementById("propertyType").value,
+
+        owner:
+          document.getElementById("owner").value,
+
+        status:
+          "Registered"
+
+      };
+
+
+      properties.push(property);
+
+
+      saveProperties();
+
+
+      document
+        .getElementById("location")
+        .value = "";
+
+      document
+        .getElementById("area")
+        .value = "";
+
+      document
+        .getElementById("owner")
+        .value = "";
+
+
+      document
+        .getElementById("successMessage")
+        .style.display = "block";
+
+
+      renderProperties();
+
+    }
+
+
+    function transferOwnership(event) {
+
+      event.preventDefault();
+
+
+      const propertyId =
+        document.getElementById(
+          "transferProperty"
+        ).value;
+
+
+      const newOwner =
+        document.getElementById(
+          "newOwner"
+        ).value;
+
+
+      const property =
+        properties.find(function(item) {
+          return item.id === propertyId;
+        });
+
+
+      if (property) {
+
+        property.owner = newOwner;
+
+        saveProperties();
+
+        alert(
+          "Ownership transferred successfully."
+        );
+
+        document
+          .getElementById("newOwner")
+          .value = "";
+
+        renderProperties();
+
+      }
+
+    }
+
+
+    function renderProperties() {
+
+      document
+        .getElementById("totalProperties")
+        .textContent = properties.length;
+
+
+      document
+        .getElementById("registeredProperties")
+        .textContent = properties.length;
+
+
+      const table =
+        document.getElementById(
+          "propertyTable"
+        );
+
+
+      const transferSelect =
+        document.getElementById(
+          "transferProperty"
+        );
+
+
+      table.innerHTML = "";
+
+
+      transferSelect.innerHTML =
+        '<option value="">Select property</option>';
+
+
+      if (properties.length === 0) {
+
+        table.innerHTML =
+          '<tr><td colspan="6" style="text-align:center;padding:40px;color:#777">No properties registered yet.</td></tr>';
+
+        return;
+
+      }
+
+
+      properties.forEach(function(property) {
+
+        const row =
+          document.createElement("tr");
+
+
+        row.innerHTML = `
+
+          <td>
+            <strong>${property.id}</strong>
+          </td>
+
+          <td>${property.location}</td>
+
+          <td>${property.area}</td>
+
+          <td>${property.propertyType}</td>
+
+          <td>${property.owner}</td>
+
+          <td>
+            <span class="badge">
+              ● ${property.status}
+            </span>
+          </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+
+        const option =
+          document.createElement("option");
+
+
+        option.value = property.id;
+
+        option.textContent =
+          property.id +
+          " - " +
+          property.location +
+          " - " +
+          property.owner;
+
+
+        transferSelect.appendChild(option);
+
+      });
+
+    }
+
+
+    renderProperties();
+
+  </script>
+
+</body>
+</html>
